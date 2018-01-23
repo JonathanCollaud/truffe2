@@ -300,16 +300,18 @@ class _DisplayReservation(GenericModel, GenericDelayValidable, GenericGroupsVali
         list_display_related = [list_display_base[0]] + [('get_display_link', _(u'Affichage')), ] + list_display_base[1:] + [('get_conflits_list', _(u'Conflits')), ]
 
         forced_widths = {
-            '1': '20%',
-            '4': '150px',
-            '5': '150px',
+            '1': '15%',
+            '2': '25%',
+            '4': '150px',  # start date
+            '5': '150px',  # end date
         }
 
         forced_widths_related = {
-            '1': '20%',
-            '4': '90px',
-            '5': '90px',
-            '7': '80px',
+            '1': '15%',
+            '2': '25%',
+            '4': '90px',  # start date on two lines
+            '5': '90px',  # end date on two lines
+            '7': '80px',  # conflicts list nicely wide
         }
 
         details_display = list_display_base + [('get_display_infos', _(u'Affichage')), ('reason', _('Raison')), ('remarks', _('Remarques')), ('get_conflits', _('Conflits'))]
@@ -391,6 +393,8 @@ class _DisplayReservation(GenericModel, GenericDelayValidable, GenericGroupsVali
 
             if not self.unit and not data['display'].allow_externals:
                 raise forms.ValidationError(_('Affichage non disponible pour les externes'))
+        else:
+            raise forms.ValidationError(_(u'Il ne faut pas laisser de ligne vide !'))
 
         if 'start_date' in data and 'end_date' in data and data['start_date'] > data['end_date']:
             raise forms.ValidationError(_(u'La date de fin ne peut pas être avant la date de début !'))
