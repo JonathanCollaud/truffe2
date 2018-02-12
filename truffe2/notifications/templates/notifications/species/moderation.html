@@ -4,7 +4,7 @@
 </em>
 
 <span>
-    {% trans "Il faut modérer l'élément" %} <span class="text-primary">{{notification.linked_object}}</span> (<span class="text-primary">{{notification.linked_object.MetaData.base_title}}</span>)!
+    {% trans "Il faut modérer l'élément" %} <span class="text-primary">{{notification.linked_object}}</span> {% trans "demandé par" %} <span class="text-primary">{{notification.linked_object.get_unit_name}}</span> (<span class="text-primary">{{notification.linked_object.MetaData.base_title}}</span>)!
 
     <br />
     <span class="pull-right">

@@ -9,6 +9,8 @@ from django.core.urlresolvers import reverse
 
 
 from rights.utils import UnitEditableModel, UnitExternalEditableModel
+from datetime import timedelta
+from app.utils import get_current_unit
 
 
 class _Room(GenericModel, GenericGroupsModel, UnitEditableModel, GenericDelayValidableInfo, SearchableModel):
@@ -531,7 +533,10 @@ class _SupplyReservation(GenericModel, GenericModelWithLines, GenericDelayValida
 
             data = supply_form['form'].cleaned_data
 
-            if 'supply' not in data or data['supply'].deleted:
+            if 'supply' not in data:
+                raise forms.ValidationError(_(u'Il ne faut pas laisser de ligne vide !'))
+            
+            if data['supply'].deleted:
                 raise forms.ValidationError(_(u'\"{}\" n\'est pas disponible'.format(data['supply'].title)))
 
             if not data['supply'].active:
@@ -584,6 +589,13 @@ class _SupplyReservation(GenericModel, GenericModelWithLines, GenericDelayValida
     def get_unit(self):
         unit = self.get_unit_name
         return unit
+
+    def get_lines(self):
+        return self.lines.order_by('order').all()
+    
+    def get_duration(self):
+        return ((self.end_date + timedelta(hours=1)).replace(second=0, minute=0, hour=0) -
+                self.start_date.replace(second=0, minute=0, hour=0)).days + 1
 
     def get_supply_infos(self):
         """Affiche les infos sur le matériel pour une réserversation"""
